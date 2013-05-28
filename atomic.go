@@ -95,9 +95,9 @@ func RoomHandler(w http.ResponseWriter, request *http.Request) {
 		newState := limitlessled.Bulb{Brightness: brightness, Temperature: temperature, IsOn: isOn}
 
 		bridge, err := limitlessled.Dial(bridgeAddress)
-		currentState := bridge.Set(*originalState, newState)
+		go states.Store(bridge.Set(*originalState, newState))
 
-		states.Store(currentState)
+		w.WriteHeader(http.StatusAccepted)
 	} else {
 		http.NotFound(w, request)
 	}
